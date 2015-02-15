@@ -18,6 +18,8 @@
   },
   "license": "ISC",
   "devDependencies": {
+    "document-register-element": "^0.1.6",
+    "es5-shim": "^4.1.0",
     "grunt": "~0.4.2",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-jshint": "~0.10.0",
