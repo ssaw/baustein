@@ -7,18 +7,15 @@ define([
 
     describe('components', function () {
 
+        components.init();
+
         var Component = components.register('base-test-component');
         var testRoot = document.createElement('div');
 
         testRoot.id = 'test-root';
         document.body.appendChild(testRoot);
 
-        beforeEach(function () {
-            components.init();
-        });
-
         afterEach(function () {
-            components.reset();
             testRoot.innerHTML = '';
         });
 

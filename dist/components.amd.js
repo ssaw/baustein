@@ -13,18 +13,6 @@ define(
     var map = [].map;
 
     /**
-     * The current function to use to query elements in the DOM. Can be overridden when calling `init`.
-     * @type {function}
-     */
-    var domQuery = defaultDOMQuery;
-
-    /**
-     * The current function to use as a DOM wrapper. Can be overridden when calling `init`.
-     * @type {function}
-     */
-    var domWrapper = defaultDOMWrapper;
-
-    /**
      * Map of event name -> handlers for that event
      * @type {Object}
      */
@@ -119,24 +107,6 @@ define(
         return str.replace(/\-(.)/g, function (a, b) {
             return b.toUpperCase();
         });
-    }
-
-    /**
-     * The default function to perform DOM queries.
-     * @param {HTMLElement} el
-     * @param {string} selector
-     */
-    function defaultDOMQuery(el, selector) {
-        return el ? el.querySelectorAll(selector) : [];
-    }
-
-    /**
-     * The default function to wrap the results of DOM queries.
-     * @param {array|NodeList} arr
-     * @returns {Array}
-     */
-    function defaultDOMWrapper(arr) {
-        return arr && arr.length ? slice.call(arr) : [];
     }
 
     /**
@@ -468,10 +438,9 @@ define(
 
     __exports__.register = register;
     /**
-     *
-     * @param {string} method
+     * Initialises the components library by parsing the DOM and binding events.
      */
-    function eventManager(method) {
+    function init() {
         var key, el;
 
         for (key in allEvents) {
@@ -479,71 +448,11 @@ define(
             // special case for resize and scroll event to listen on window
             el = ['resize', 'scroll'].indexOf(key) !== -1 ? window : doc.body;
 
-            el[method](key, handleEvent, !!allEvents[key]);
+            el.addEventListener(key, handleEvent, !!allEvents[key]);
         }
-    }
-
-    /**
-     * Binds all events.
-     */
-    function bindEvents() {
-        eventManager('addEventListener');
-    }
-
-    __exports__.bindEvents = bindEvents;
-    /**
-     * Unbinds all events.
-     */
-    function unbindEvents() {
-        eventManager('removeEventListener');
-    }
-
-    __exports__.unbindEvents = unbindEvents;
-    /**
-     * Initialises the components library by parsing the DOM and binding events.
-     * @param {object} [options]
-     * @param {function} [options.domQuery] A custom function to use to make DOM queries.
-     * @param {function} [options.domWrapper] A custom function to use to wrap the results
-     *                                        of DOM queries.
-     */
-    function init(options) {
-
-        options = options || {};
-
-        if (options.domQuery) {
-            domQuery = options.domQuery;
-        }
-
-        if (options.domWrapper) {
-            domWrapper = options.domWrapper;
-        }
-
-        bindEvents();
     }
 
     __exports__.init = init;
-    /**
-     * Opposite of `init`. Destroys all component instances and un-registers all components.
-     * Resets the `domQuery` and `domWrapper` functions to their defaults.
-     */
-    function reset() {
-
-        // destroy any component instances
-        defaultDOMWrapper(defaultDOMQuery(document, '[is]')).forEach(function (element) {
-            if (isFunction(element.destroy)) {
-                element.destroy();
-            }
-        });
-
-        // reset state
-        domQuery = defaultDOMQuery;
-        domWrapper = defaultDOMWrapper;
-
-        // unbind all event handlers
-        unbindEvents();
-    }
-
-    __exports__.reset = reset;
     /**
      * @param {string} name
      * @returns {Object}
@@ -558,7 +467,7 @@ define(
      * @returns {Array}
      */
     function getInstancesOf(name) {
-        return defaultDOMWrapper(defaultDOMQuery(document, '[is="' + name + '"]'));
+        return slice.call(document.querySelectorAll('[is="' + name + '"]'));
     }
 
     __exports__.getInstancesOf = getInstancesOf;
@@ -579,11 +488,10 @@ define(
         createdCallback: function () {
 
             this._events = [];
+
+            // legacy support
             this.el = this;
 
-            // Convenience for accessing this components root element wrapped
-            // in whatever `domWrapper` returns. Not used internally.
-            this.$el = domWrapper([this]);
 
             // Options are built from optional default options - this can
             // be a property or a function that returns an object, the
@@ -787,7 +695,7 @@ define(
          * @returns {Array}
          */
         find: function (selector) {
-            return domWrapper(domQuery(this, selector));
+            return slice.call(this.querySelectorAll(selector));
         },
 
         /**
