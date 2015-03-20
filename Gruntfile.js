@@ -70,6 +70,14 @@ module.exports = function (grunt) {
                             included: false
                         },
                         {
+                            pattern: 'node_modules/document-register-element/build/**/*.js',
+                            included: false
+                        },
+                        {
+                            pattern: 'node_modules/es5-shim/**/*.js',
+                            included: false
+                        },
+                        {
                             pattern: 'test/spec/**/*.js',
                             included: false
                         }
@@ -84,6 +92,10 @@ module.exports = function (grunt) {
                                 type: 'text-summary',
                                 subdir: '.',
                                 file: 'text-summary.txt'
+                            },
+                            {
+                                type: 'html',
+                                subdir: '.'
                             }
                         ]
                     }
