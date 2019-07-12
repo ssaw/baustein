@@ -1,6 +1,6 @@
 {
   "name": "@lyst/baustein",
-  "version": "2.0.7",
+  "version": "2.1.0",
   "scripts": {
     "build": "rm -rf dist/** && mkdir dist && npm run lint && babel src/baustein.js -o dist/baustein.js",
     "lint": "eslint src",
@@ -8,6 +8,7 @@
     "publish": "npm publish --access public"
   },
   "main": "dist/baustein.js",
+  "types": "index.d.ts",
   "jsnext:main": "src/baustein.js",
   "engines": {
     "node": ">=4.x.x"
